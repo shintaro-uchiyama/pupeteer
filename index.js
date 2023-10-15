@@ -25,6 +25,7 @@ const puppeteer = require("puppeteer");
     // await page.waitFor(500);
     
     await page.screenshot({ path: 'fullpage.png', fullPage: true });
+    console.log("shot");
   } catch (e) {
     console.log(e);
   } finally {

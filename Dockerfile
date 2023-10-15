@@ -1,22 +1,31 @@
-FROM node:18
+FROM node:16-bullseye-slim
 
-RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg \
-    && sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/googlechrome-linux-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros fonts-kacst fonts-freefont-ttf libxss1 \
-    --no-install-recommends \
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV CHROME_PATH=/usr/bin/chromium
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update -qq \
+    && apt install -qq -y --no-install-recommends \
+    curl \
+    git \
+    gnupg \
+    libgconf-2-4 \
+    libxss1 \
+    libxtst6 \
+    python \
+    g++ \
+    build-essential \
+    chromium \
+    chromium-sandbox \
+    dumb-init \
+    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd -r pptruser && useradd -rm -g pptruser -G audio,video pptruser
+    && rm -rf /src/*.deb
 
-COPY ./ /usr/app
-WORKDIR /usr/app
-
-
-RUN node node_modules/puppeteer/install.js
-RUN npm install puppeteer --save-dev --unsafe-perm=true --allow-root
+COPY ./ /usr/src/app
+WORKDIR /usr/src/app
 
 RUN npm install
 
-CMD ["google-chrome-stable"]
+ENTRYPOINT ["dumb-init", "-c", "--"]
