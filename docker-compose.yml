@@ -11,3 +11,7 @@ services:
     command: >
       bash -c "npm install &&
       node index.js"
+  client:
+    image: nginx
+    ports:
+      - 8000:80

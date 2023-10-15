@@ -18,7 +18,8 @@ const puppeteer = require("puppeteer");
       "Accept-Language": "ja-JP", //日本語版ページが読み込まれるようにする
     });
 
-    const url = 'https://stackoverflow.com/questions/47616985/node-puppeteer-take-screenshot-full-page-spa';
+    // const url = 'https://stackoverflow.com/questions/47616985/node-puppeteer-take-screenshot-full-page-spa';
+    const url = 'http://client:80';
     await page.goto(url, {
         waitUntil: 'networkidle2'
     });
